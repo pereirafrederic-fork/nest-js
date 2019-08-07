@@ -1,6 +1,8 @@
-import { Module, NestModule, RequestMethod, MiddlewareConsumer, HttpExceptionFilter } from '@nestjs/common';
+import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
 import * as helmet from "helmet";
 import * as cors from "cors";
+
+import {HttpExceptionFilter} from './common/http-exception.filter'
 
 import { APP_FILTER } from '@nestjs/core';
 
