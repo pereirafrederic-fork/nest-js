@@ -4,15 +4,29 @@ import { CatsService } from './cats.service';
 import { Cat } from './cat.interface';
 import { CreateCatDto } from './cats.dto'
 
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiUseTags,
+} from '@nestjs/swagger';
+import {CatClass} from './cat.class'
+
 
 import {HttpExceptionFilter} from '../common/http-exception.filter'
 
-
+@ApiUseTags('cats')
 @Controller('cats')
 export class CatsController {
 
   constructor(private readonly catsService: CatsService) {}
 
+@ApiOperation({ title: 'get all cats' })
+@ApiResponse({
+  status: 201,
+  description: 'tous les cats ont été trouvé.',
+  type: CatClass
+})
   @Get()
   async findAll(@Req() request: Request):  Promise<Cat[]> {
 
@@ -20,6 +34,11 @@ export class CatsController {
   }
 
   @Get('cat/:id')
+  @ApiResponse({
+  status: 200,
+  description: 'The found record',
+  type: CatClass,
+})
   async findOne(@Param() params): Promise<Cat> {
   console.log(params.id);
     return this.catsService.findOne(params.id);
@@ -27,7 +46,13 @@ export class CatsController {
 
 
 
-
+@ApiOperation({ title: 'Create cat' })
+@ApiResponse({
+  status: 201,
+  description: 'The record has been successfully created.',
+  type: CatClass
+})
+@ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
   @HttpCode(204)
   @Header('Cache-Control', 'none')
@@ -38,6 +63,7 @@ export class CatsController {
 
 
   @Get('/cat')
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
     async findAllForbiden() {
 
       /*
@@ -67,6 +93,7 @@ export class CatsController {
 }
 
   @Post('/cat')
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
 @UseFilters(new HttpExceptionFilter())
   async createForbidden(@Body() createCatDto: CreateCatDto) {
   throw new ForbiddenException();
